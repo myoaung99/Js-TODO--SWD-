@@ -5,6 +5,43 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Js TODO List</title>
+    <style>
+      li {
+        list-style: none;
+      }
+    </style>
   </head>
-  <body></body>
+  <body>
+    <input type="text" id="input" />
+    <br />
+    <ul id="list"></ul>
+    <script>
+      let input = document.querySelector("#input");
+      let list = document.querySelector("#list");
+
+      let id = 1;
+
+      //   function addToList(item) {
+      //     const li = document.createElement("li");
+      //     li.append(`${id}: ${item}`);
+      //     list.append(li);
+      //     id += 1;
+      //   }
+
+      function addToLocalStorage(key, item) {
+        localStorage.setItem(key, item);
+        const li = document.createElement("li");
+        li.append(`${key}: `, localStorage.getItem(key));
+        list.append(li);
+        id += 1;
+      }
+
+      input.addEventListener("keyup", function (e) {
+        if (e.code === "Enter") {
+          addToLocalStorage(id, this.value);
+          this.value = "";
+        }
+      });
+    </script>
+  </body>
 </html>
