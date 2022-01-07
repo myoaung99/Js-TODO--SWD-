@@ -5,11 +5,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Js TODO List</title>
-    <style>
-      li {
-        list-style: none;
-      }
-    </style>
   </head>
   <body>
     <input type="text" id="input" />
@@ -19,29 +14,61 @@
       let input = document.querySelector("#input");
       let list = document.querySelector("#list");
 
+      const keys = Object.keys(localStorage);
+      keys.sort();
+
       let id = 1;
 
-      //   function addToList(item) {
-      //     const li = document.createElement("li");
-      //     li.append(`${id}: ${item}`);
-      //     list.append(li);
-      //     id += 1;
-      //   }
-
-      function addToLocalStorage(key, item) {
-        localStorage.setItem(key, item);
-        const li = document.createElement("li");
-        li.append(`${key}: `, localStorage.getItem(key));
-        list.append(li);
-        id += 1;
+      // id နံပါတ်ကို အစဥ်လိုက်သွားဖို့ လိုချင်တာ
+      if (localStorage.length > 0) {
+        id = Number(keys[keys.length - 1]) + 1;
       }
 
+      // local Storage မှာ သိမ်းခြင်း
+      function saveToLocalStorage(item) {
+        localStorage.setItem(id, item);
+        id += 1;
+        input.value = "";
+      }
+
+      // ဖျက်သည့် function
+      function del(x) {
+        localStorage.removeItem(x);
+        let current = document.getElementById(x);
+        current.remove();
+      }
+
+      // id(key) နဲ့ item(localstorage.value)တွေ လက်ခံပြီး li တွေ၊ btnတွေ တည်ဆောက်
+      function addToList(item, y) {
+        const li = document.createElement("li");
+        let btn = document.createElement("button");
+        let btnText = document.createTextNode("Delete");
+
+        btn.setAttribute("onclick", "del(" + y + ")");
+        btn.appendChild(btnText);
+
+        li.setAttribute("id", y);
+        li.append(btn);
+        li.append(" - " + item);
+        list.append(li);
+      }
+
+      // ul ထဲကို သွားထည့်
+      function showFromLocalStorage() {
+        keys.map((el) => {
+          addToList(localStorage.getItem(el), el);
+        });
+      }
+
+      // input ကိုစောင့်
       input.addEventListener("keyup", function (e) {
         if (e.code === "Enter") {
-          addToLocalStorage(id, this.value);
-          this.value = "";
+          addToList(this.value);
+          saveToLocalStorage(this.value);
         }
       });
+
+      showFromLocalStorage();
     </script>
   </body>
 </html>
