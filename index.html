@@ -7,12 +7,14 @@
     <title>Js TODO List</title>
   </head>
   <body>
-    <input type="text" id="input" />
+    <input type="text" id="input" autofocus />
+    <button id="clear">Clear Storage</button>
     <br />
     <ul id="list"></ul>
     <script>
       let input = document.querySelector("#input");
       let list = document.querySelector("#list");
+      // const clear = document.querySelector("#clear");
 
       const keys = Object.keys(localStorage);
       keys.sort();
@@ -23,6 +25,12 @@
       if (localStorage.length > 0) {
         id = Number(keys[keys.length - 1]) + 1;
       }
+
+      clear.addEventListener("click", () => {
+        console.log("Clear");
+        localStorage.clear();
+        list.innerHTML = "";
+      });
 
       // local Storage မှာ သိမ်းခြင်း
       function saveToLocalStorage(item) {
@@ -38,17 +46,35 @@
         current.remove();
       }
 
+      // Item ကို edit ခြင်း
+      function edit(x) {
+        let current = document.getElementById(x);
+        let originalItem = current.childNodes[2].nodeValue;
+        let editItem = prompt("Edit 👉 " + originalItem);
+
+        localStorage.setItem(x, editItem);
+        current.childNodes[2].nodeValue = " - " + editItem;
+      }
+
       // id(key) နဲ့ item(localstorage.value)တွေ လက်ခံပြီး li တွေ၊ btnတွေ တည်ဆောက်
       function addToList(item, y) {
         const li = document.createElement("li");
-        let btn = document.createElement("button");
-        let btnText = document.createTextNode("Delete");
 
-        btn.setAttribute("onclick", "del(" + y + ")");
-        btn.appendChild(btnText);
+        // Delete Button
+        let delbtn = document.createElement("button");
+        let delText = document.createTextNode("Delete");
+        delbtn.setAttribute("onclick", "del(" + y + ")");
+        delbtn.appendChild(delText);
+
+        // Edit button
+        let editbtn = document.createElement("button");
+        let editText = document.createTextNode("Edit");
+        editbtn.setAttribute("onclick", "edit(" + y + ")");
+        editbtn.appendChild(editText);
 
         li.setAttribute("id", y);
-        li.append(btn);
+        li.append(delbtn);
+        li.append(editbtn);
         li.append(" - " + item);
         list.append(li);
       }
@@ -65,6 +91,7 @@
         if (e.code === "Enter") {
           addToList(this.value);
           saveToLocalStorage(this.value);
+          location.reload();
         }
       });
 
